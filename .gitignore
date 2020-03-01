@@ -1,6 +1,8 @@
-# Default ignored files
-.idea
-.target
-.sgit
 
+.idea/
 
+.DS_Store
+
+target/
+
+WorkingDirectory/
