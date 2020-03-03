@@ -1,14 +1,22 @@
 package sgit
 
 import scopt.OParser
-import sgit.create.init
+import sgit.io.init
+import sgit.localChange.{add, status}
+import sgit.io.blobConversion
+import sgit.objects.{Blob, BlobAndContent}
+
 /*import sgit.create._
 import sgit.localChange.{add, commit}
 import sgit.Tree
 import sgit.io.readFile
 import sgit.io.createObject
-import sgit.io.writeFile
-import better.files._*/
+import sgit.io.writeFile*/
+
+
+import better.files._
+import sgit.io.getFile
+import sgit.io.indexConversion
 import scopts.{Parser,Config}
 
 
@@ -35,11 +43,15 @@ object Main extends App {
    */
   def determineMode(command: String, option: String, files: Seq[String]): Unit = {
     command match {
-      case "init" => init.init()
-      case "status" => println("status")
+    case "init" => {
+      init.init()
+    }
+
+      // init.init()
+      case "status" => status.sgitStatus()
       case "diff" => println("diff")
       case "commit" => println("commit")
-      case "add" => println("add")
+      case "add" => add.addFiles(files)
       case _=> println("Error, write a good command 2")
     }
   }

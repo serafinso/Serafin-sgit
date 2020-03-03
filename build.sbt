@@ -18,4 +18,4 @@ libraryDependencies ++= Seq(
 
 parallelExecution in Test := false
 
-//assemblyJarName in assembly := "sgit.jar"
+assemblyJarName in assembly := "sgit.jar"

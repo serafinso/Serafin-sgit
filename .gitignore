@@ -3,8 +3,8 @@
 
 .DS_Store
 
-target/
-
-WorkingDirectory/
+project/target/
 
 .sgit/
+
+target/

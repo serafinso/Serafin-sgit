@@ -2,58 +2,28 @@ package sgit.io
 
 import better.files._
 import java.nio.file.{Files, Paths}
-import sgit.objects.{Blob, Tree}
+import sgit.io.getFile._
+
+import sgit.objects.Blob
 
 object createObject {
 
   /**
    *
-   * @param asDirectory
+   * @param isDirectory
    * @param name
-   * @return
+   * @return true if the file as been created, false otherwise
    */
-  def createFile(asDirectory: Boolean, name: String ) : Boolean = {
-    if (!Files.exists(Paths.get(name))){
-      val file1: File = name
+  def createFile(isDirectory: Boolean, name : String) : Boolean = {
+    if(getFile.isFilePresent(name)) false
+    else {
+      val _ : File = name
         .toFile
-        .createIfNotExists(asDirectory, false)
+        .createIfNotExists(isDirectory, createParents = true)
       true
-    } else {
-      false
     }
   }
 
-  def createBlob(file: File) : Blob = {
-    val root = ".sgit/".toFile.parent
-    val blobPath: String = ".sgit/objects/blob/"
-    //Creation of blob in blob directory if not exist
-    if(!blobPath.contains(file.sha1)){
-      val newFileInObject = createObject.createFile(false, blobPath + file.sha1)
-      if (newFileInObject) {
-        (blobPath + file.sha1).toFile.appendText(file.contentAsString)
-      }
-    }
-    Blob(file.sha1, root.relativize(file).toString)
-  }
 
-  /**
-   * Create new objects blob if they don't already exist
-   * @param files a sequence of files
-   * @return all the blob object corresponding to the files
-   */
-  def createObjectBlob(files :Seq[File]) : Seq[Blob] = {
-    files.map((file: File) => {
-      val root = ".sgit/".toFile.parent
-      val blobPath: String = ".sgit/objects/blob/"
-      //Creation of blob in blob directory if not exist
-      if(!blobPath.contains(file.sha1)){
-        val newFileInObject = createObject.createFile(false, blobPath + file.sha1)
-        if (newFileInObject) {
-          (blobPath + file.sha1).toFile.appendText(file.contentAsString)
-        }
-      }
-      Blob(file.sha1, root.relativize(file).toString)
-    })
-  }
 
 }
