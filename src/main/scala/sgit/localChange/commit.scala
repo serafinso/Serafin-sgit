@@ -1,7 +1,9 @@
 package sgit.localChange
 
+import better.files.File
+import sgit.io.{indexConversion, treeConversion, utilities}
 import sgit.objectManipulation.{blobManipulation, treeManipulation}
-import sgit.objects.{Blob, Tree}
+import sgit.objects.{Blob, Commit, Tree}
 
 object commit {
 
@@ -40,19 +42,43 @@ object commit {
 
   def writeTree(blobs : List[Blob], trees : List[Tree]) : Tree = {
     if(blobs.isEmpty ){
-      return new Tree("root", blobs, trees)
+      val treeCreated = new Tree("root", blobs, trees)
+      treeConversion.createTreeFile(List(treeCreated))
+      return treeCreated
     }
     val maxLength : Int = maxLenghtPath(blobs, 0)
     if(maxLength == 1) {
-      return new Tree("root", blobs, trees)
+      val treeCreated = new Tree("root", blobs, trees)
+      treeConversion.createTreeFile(List(treeCreated))
+      return treeCreated
     }
     val pathSelected : String = getPath(blobs, maxLength)
     //println(pathSelected)
     val blobsToAdd: List[Blob] = blobManipulation.getBlobWithPath(pathSelected, blobs)
     val treesToAdd: List[Tree] = treeManipulation.getTreeWithPath(pathSelected, trees)
     val treeCreated : Tree = new Tree(pathSelected, blobsToAdd, treesToAdd)
+    //WARNING NOT PF
+    treeConversion.createTreeFile(List(treeCreated))
     writeTree(blobManipulation.diffList(blobs, blobsToAdd), treeCreated::treeManipulation.diffList(trees,treesToAdd))
   }
 
+  def sgitCommit() : Unit = {
+    val head : Option[String] = utilities.getHEAD
+    if(head.isDefined){
+      val headString : String = head.get
+      val indexBlob: List[Blob] = indexConversion.indexToBlobList
+      val tree : Tree = writeTree(indexBlob, List.empty)
+      if (headString.equals("First commit")){
+        val commit : Commit = new Commit(tree.key, None, null)
+        //CREATE COMMIT
+        //UPDATE ref
+      } else {
+        //GET commitKey
+        //create commit : val commit : Commit = new Commit(tree.key, commitKey, null)
+        //UPDATE ref
+      }
+
+    }
+  }
 
 }

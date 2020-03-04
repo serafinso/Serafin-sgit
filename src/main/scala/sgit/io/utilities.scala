@@ -1,7 +1,10 @@
 package sgit.io
 
 import java.nio.file.{Files, Path, Paths}
+
 import better.files._
+import sgit.io.indexConversion.getIndex
+import sgit.objects.Blob
 
 object utilities {
 
@@ -40,14 +43,40 @@ object utilities {
 
   def isFilePresent(folderName: String): Boolean = Files.exists(Paths.get(folderName))
 
-  def getIndex : Option[File] = {
-    if (isFilePresent(".sgit/index")) {Some(".sgit/index".toFile)}
-    else None
-  }
-
   def getKeySha1FromString(s : String): String ={
     val md = java.security.MessageDigest.getInstance("SHA-1")
     md.digest(s.getBytes("UTF-8")).map("%02x".format(_)).mkString
+  }
+
+
+  def getHEAD : Option[String] = {
+    if (isFilePresent(".sgit/HEAD")){
+      val headFile : File = ".sgit/HEAD".toFile
+      val line : String = headFile.contentAsString
+      if (line.equals("")) { //PREMIER COMMIT
+        println("This is your first commit")
+        headFile.overwrite("refs/heads/master")
+        Some("First commit")
+      } else {
+        Some(line)
+      }
+    }else {
+      println("git init first")
+      None
+    }
+  }
+
+  /**
+   * Rewrite the head entirely text
+   * @param text text to add to the head file
+   */
+  def headUpdate(text : String) : Unit = {
+    if(isFilePresent(".sgit/HEAD")){
+      ".sgit/HEAD".toFile.overwrite(text)
+    }else {
+      println("git init first")
+    }
+
   }
 
 }

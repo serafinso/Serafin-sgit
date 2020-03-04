@@ -1,11 +1,18 @@
 package sgit.io
 
 import better.files._
+import sgit.io.utilities.isFilePresent
 import sgit.objects.{Blob, BlobAndContent}
 object indexConversion {
 
+  def getIndex : Option[File] = {
+    if (isFilePresent(".sgit/index")) {Some(".sgit/index".toFile)}
+    else None
+  }
+
+
   def indexToBlobList : List[Blob] = {
-    val indexFile : Option[File] = utilities.getIndex
+    val indexFile : Option[File] = getIndex
     if(indexFile.isDefined){
       val line :List[String] = indexFile.get.contentAsString
         .replace("\r", "")

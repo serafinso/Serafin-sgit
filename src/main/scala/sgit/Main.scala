@@ -64,9 +64,10 @@ object Main extends App {
         println(c1.key)
         println(c1.content)
         println("WRITE TREE")
-        println(commit.writeTree(List(b1,b2), List.empty).content)*/
+        println(commit.writeTree(List(b1,b2), List.empty).content)
         val indexBlob: List[Blob] = indexConversion.indexToBlobList
-        println(commit.writeTree(indexBlob, List.empty).treesT)
+        println(commit.writeTree(indexBlob, List.empty))*/
+        println(utilities.getHEAD)
 
       }
       case "add" => add.addFiles(files)
