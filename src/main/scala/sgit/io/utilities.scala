@@ -3,7 +3,7 @@ package sgit.io
 import java.nio.file.{Files, Path, Paths}
 import better.files._
 
-object getFile {
+object utilities {
 
   /**
    * @return the working directory File
@@ -43,6 +43,11 @@ object getFile {
   def getIndex : Option[File] = {
     if (isFilePresent(".sgit/index")) {Some(".sgit/index".toFile)}
     else None
+  }
+
+  def getKeySha1FromString(s : String): String ={
+    val md = java.security.MessageDigest.getInstance("SHA-1")
+    md.digest(s.getBytes("UTF-8")).map("%02x".format(_)).mkString
   }
 
 }

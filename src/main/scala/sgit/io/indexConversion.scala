@@ -5,7 +5,7 @@ import sgit.objects.{Blob, BlobAndContent}
 object indexConversion {
 
   def indexToBlobList : List[Blob] = {
-    val indexFile : Option[File] = getFile.getIndex
+    val indexFile : Option[File] = utilities.getIndex
     if(indexFile.isDefined){
       val line :List[String] = indexFile.get.contentAsString
         .replace("\r", "")

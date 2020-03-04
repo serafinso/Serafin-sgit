@@ -2,7 +2,7 @@ package sgit.io
 
 import java.nio.file.{Files, Paths}
 
-import sgit.io.{createObject, getFile}
+import sgit.io.{createObject, utilities}
 
 
 object init {
@@ -11,7 +11,7 @@ object init {
    */
   def init() : Unit = {
 
-    if (!getFile.isFilePresent(".sgit")) {
+    if (!utilities.isFilePresent(".sgit")) {
       createObject.createFile(true, ".sgit")
       createObject.createFile(false,  ".sgit/HEAD")
       createObject.createFile(true,  ".sgit/objects")

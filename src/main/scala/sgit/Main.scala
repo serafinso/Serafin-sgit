@@ -2,9 +2,9 @@ package sgit
 
 import scopt.OParser
 import sgit.io.init
-import sgit.localChange.{add, status}
+import sgit.localChange.{add, commit, status}
+import sgit.objects.{Blob, BlobAndContent, Commit, Tree}
 import sgit.io.blobConversion
-import sgit.objects.{Blob, BlobAndContent}
 
 /*import sgit.create._
 import sgit.localChange.{add, commit}
@@ -15,7 +15,7 @@ import sgit.io.writeFile*/
 
 
 import better.files._
-import sgit.io.getFile
+import sgit.io.utilities
 import sgit.io.indexConversion
 import scopts.{Parser,Config}
 
@@ -50,7 +50,25 @@ object Main extends App {
       // init.init()
       case "status" => status.sgitStatus()
       case "diff" => println("diff")
-      case "commit" => println("commit")
+      case "commit" => {
+        /*val b1 : Blob = new Blob("B1", "d1/d2/d3/f5")
+        val b2 : Blob = new Blob("B2", "b2")
+        val t1: Tree = new Tree("t1", List(b1, b2), List.empty)
+        val t2: Tree = new Tree("t2", List(b1), List(t1))
+        val t3: Tree = new Tree("t3", List(b1,b2), List(t1, t2))
+        println(t1.toString)
+        println(t2.toString)
+        println(t3.toString)
+        val c1 : Commit = new Commit(t3, None, "Bonjour")
+        println("KEY : ")
+        println(c1.key)
+        println(c1.content)
+        println("WRITE TREE")
+        println(commit.writeTree(List(b1,b2), List.empty).content)*/
+        val indexBlob: List[Blob] = indexConversion.indexToBlobList
+        println(commit.writeTree(indexBlob, List.empty).treesT)
+
+      }
       case "add" => add.addFiles(files)
       case _=> println("Error, write a good command 2")
     }

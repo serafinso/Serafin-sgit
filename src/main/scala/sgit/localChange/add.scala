@@ -1,7 +1,8 @@
 package sgit.localChange
 
-import sgit.io.{blobConversion, getFile, indexConversion}
+import sgit.io.{blobConversion, utilities, indexConversion}
 import sgit.objects.{Blob, BlobAndContent}
+import sgit.objectManipulation.blobManipulation
 
 object add {
 
@@ -72,44 +73,13 @@ object add {
     }
   }
 
-  /**
-   *
-   * @param path
-   * @param blobs
-   * @return
-   */
-  @scala.annotation.tailrec
-  def pathInBlobList(path: String, blobs: List[Blob]) : Option[Blob] = {
-    if(blobs.isEmpty)None
-    else{
-      val blob = blobs.head
-      if (blob.path.equals(path)) Some(blob)
-      else (pathInBlobList(path, blobs.tail))
-    }
-  }
-
-  /**
-   *
-   * @param blobToSearch
-   * @param blobs
-   * @return
-   */
-  @scala.annotation.tailrec
-  def blobInList(blobToSearch: BlobAndContent, blobs: List[Blob]) : Boolean = {
-    if(blobs.isEmpty) false
-    else{
-      val blob = blobs.head
-      if (blobToSearch.key.equals(blob.key) && blobToSearch.path.equals(blob.path)) true
-      else (blobInList(blobToSearch, blobs.tail))
-    }
-  }
 
   /**
    *
    */
   @scala.annotation.tailrec
   def addFiles(files : Seq[String]): Unit = {
-    if(!getFile.isFilePresent(".sgit")){
+    if(!utilities.isFilePresent(".sgit")){
       println("Git init first")
     }else{
       if(files.nonEmpty){
@@ -128,20 +98,20 @@ object add {
             val pathInWD : Option[BlobAndContent] = pathInBlobACList(file, wdBlob)
             if(pathInWD.isDefined){ //IN WD
               val blobAc : BlobAndContent = pathInWD.get
-              if( !blobInList( blobAc, indexBlob)){
+              if( !blobManipulation.blobInList( blobAc, indexBlob)){
                 //BLOB NOT IN INDEX
-                val isInIndex : Option[Blob] = pathInBlobList(blobAc.path,indexBlob)
+                val isInIndex : Option[Blob] = blobManipulation.pathInBlobList(blobAc.path,indexBlob)
                 if(isInIndex.isDefined){
                   //PATH IN INDEX (Modified/Update)
                   blobConversion.createBlobFiles(List(blobAc))
-                  val blobToAdd = blobConversion.blobACToBlob(blobAc)
+                  val blobToAdd = blobManipulation.blobACToBlob(blobAc)
                   val blobToRemove : Blob = isInIndex.get
                   val newindexBlob = blobToAdd::removeBlob(blobToRemove, indexBlob)
                   indexConversion.blobListToIndexFile(newindexBlob)
                 }else{
                   //PATH NOT IN INDEX (Untracked)
                   blobConversion.createBlobFiles(List(blobAc))
-                  val blobToAdd = blobConversion.blobACToBlob(blobAc)
+                  val blobToAdd = blobManipulation.blobACToBlob(blobAc)
                   val newindexBlob = blobToAdd::indexBlob
                   indexConversion.blobListToIndexFile(newindexBlob)
                 }
@@ -150,7 +120,7 @@ object add {
                 println(blobAc.path + " already staged")
               }
             }else{ //NOT IN WD
-              val isInWd : Option[Blob] = pathInBlobList(file, indexBlob)
+              val isInWd : Option[Blob] = blobManipulation.pathInBlobList(file, indexBlob)
               if(isInWd.isDefined){ //Modified/Delete
                 val newindexBlob = removeBlob(isInWd.get, indexBlob)
                 indexConversion.blobListToIndexFile(newindexBlob)

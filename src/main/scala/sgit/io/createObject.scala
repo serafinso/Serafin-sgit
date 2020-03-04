@@ -2,7 +2,7 @@ package sgit.io
 
 import better.files._
 import java.nio.file.{Files, Paths}
-import sgit.io.getFile._
+import sgit.io.utilities._
 
 import sgit.objects.Blob
 
@@ -15,7 +15,7 @@ object createObject {
    * @return true if the file as been created, false otherwise
    */
   def createFile(isDirectory: Boolean, name : String) : Boolean = {
-    if(getFile.isFilePresent(name)) false
+    if(utilities.isFilePresent(name)) false
     else {
       val _ : File = name
         .toFile

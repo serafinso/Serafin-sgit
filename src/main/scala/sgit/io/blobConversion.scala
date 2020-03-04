@@ -2,7 +2,7 @@ package sgit.io
 
 import better.files._
 import sgit.objects.{Blob, BlobAndContent}
-import getFile._
+import utilities._
 
 import scala.annotation.tailrec
 
@@ -24,7 +24,7 @@ object blobConversion {
    * @return
    */
   def wdToBlobACList : List[BlobAndContent] = {
-    val wdFiles : Option[List[File]] = getFile.getAllWDFiles
+    val wdFiles : Option[List[File]] = utilities.getAllWDFiles
     if(wdFiles.isEmpty){
       List.empty
     } else {
@@ -58,7 +58,7 @@ object blobConversion {
    * @return
    */
   def wdToBlobList : List[Blob] = {
-    val wdFiles : Option[List[File]] = getFile.getAllWDFiles
+    val wdFiles : Option[List[File]] = utilities.getAllWDFiles
     if(wdFiles.isEmpty){
       List.empty
     } else {
@@ -125,14 +125,9 @@ object blobConversion {
     }
   }
 
-  /**
-   *
-   * @param blobAndContent
-   * @return
-   */
-  def blobACToBlob(blobAndContent: BlobAndContent) : Blob = {
-    Blob(blobAndContent.key, blobAndContent.path)
-  }
+
+
+
 
 
 
