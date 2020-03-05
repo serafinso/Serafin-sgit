@@ -5,7 +5,11 @@ import sgit.objects.Tree
 
 object treeConversion {
 
-
+  /** NOT PF method
+   * create trees files
+   * @param trees to be create as trees files
+   */
+  @scala.annotation.tailrec
   def createTreeFile (trees : List[Tree]) : Unit = {
     val treePath: String = ".sgit/objects/tree/"
     if(trees.nonEmpty) {
