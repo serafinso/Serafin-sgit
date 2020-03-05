@@ -1,5 +1,5 @@
 package sgit.io
 
-class tagsConversion {
+object tagsConversion {
 
 }

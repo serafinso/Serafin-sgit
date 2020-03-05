@@ -6,12 +6,13 @@ import sgit.objectManipulation.blobManipulation
 
 object add {
 
-  /**
+  /** PF method
    *
-   * @param blobs
-   * @param blobAndContents
-   * @return
+   * @param blobs the blob list
+   * @param blobAndContents the blobAndContent list
+   * @return true if blobs and blobAndContents contained the same blobs
    */
+  @scala.annotation.tailrec
   def isBlobACListEqual(blobs : List[Blob], blobAndContents: List[BlobAndContent] ) : Boolean = {
     if(blobs.length != blobAndContents.length) return false
     if(blobs.isEmpty && blobAndContents.isEmpty) return true
@@ -20,11 +21,11 @@ object add {
     isBlobACListEqual(blobs.tail, newBlobAndContents)
   }
 
-  /**
+  /** PF method
    *
-   * @param blob
-   * @param blobAndContents
-   * @return blobAndContents without the blob blob
+   * @param blob the blob to remove
+   * @param blobAndContents list of blob
+   * @return blobAndContents without the blob
    */
   def removeBlobAC(blob : Blob, blobAndContents: List[BlobAndContent]): List[BlobAndContent] ={
     if(blobAndContents.isEmpty) List.empty
@@ -39,11 +40,12 @@ object add {
     }
   }
 
-  /** Remove th blob to the List if it contained it
+  /** PF method
+   * Remove the blob to the List if it contained it
    *
-   * @param blob
-   * @param blobs
-   * @return blobAndContents without the blob blob
+   * @param blob the blob to remove
+   * @param blobs the blob list
+   * @return blobs list without the blob, or blobs list unaltered if blobs doesn't contained blob
    */
   def removeBlob(blob : Blob, blobs: List[Blob]): List[Blob] ={
     if(blobs.isEmpty) List.empty
@@ -57,11 +59,11 @@ object add {
     }
   }
 
-  /**
+  /** PF method
    *
-   * @param path
-   * @param blobs
-   * @return
+   * @param path the path to search in blob list
+   * @param blobs the blob list
+   * @return a blobAC that has the right path
    */
   @scala.annotation.tailrec
   def pathInBlobACList(path: String, blobs: List[BlobAndContent]) : Option[BlobAndContent] = {
@@ -69,13 +71,15 @@ object add {
     else{
       val blob = blobs.head
       if (blob.path.equals(path)) Some(blob)
-      else (pathInBlobACList(path, blobs.tail))
+      else pathInBlobACList(path, blobs.tail)
     }
   }
 
 
-  /**
+  /** NOT PF method
    *
+   * Main add method
+   * @param files = files to add
    */
   @scala.annotation.tailrec
   def addFiles(files : Seq[String]): Unit = {

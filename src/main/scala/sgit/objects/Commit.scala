@@ -5,7 +5,8 @@ import java.security.{ MessageDigest, SecureRandom }
 import sgit.io.utilities.getKeySha1FromString
 
 class Commit(tree: String, parent : Option[String], message : String){
-
+  val parentC : Option[String] = parent
+  val treeC : String = tree
   val content : String  = {
     "tree : " + tree + "\nparent : " + parent + "\nmessage : " + message
   }

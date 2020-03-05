@@ -1,45 +1,78 @@
 package sgit.localChange
 
-import better.files.File
-import sgit.io.{indexConversion, treeConversion, utilities}
+import sgit.io.{commitConversion, indexConversion, refsConversion, treeConversion, utilities}
 import sgit.objectManipulation.{blobManipulation, treeManipulation}
-import sgit.objects.{Blob, Commit, Tree}
+import sgit.objects.{Blob, Commit, Ref, Tree}
 
 object commit {
-
-  def getLastCommit(){
-
-  }
-
+  /** PF method
+   *
+   * @param blobPath the path
+   * @return the path length
+   */
   def getLengthPath(blobPath : String): Int = {
     val splitBlob : Array[String] = blobPath.split("/")
     splitBlob.length
   }
 
+  /** PF method
+   *
+   * @param blobs the blob list
+   * @param max the length max (to use this method the max should be initializate at 0)
+   * @return the max length on the blob list
+   */
   @scala.annotation.tailrec
   def maxLenghtPath(blobs : List[Blob], max: Int): Int = {
     if(blobs.isEmpty) max
     else {
       val lenght : Int = getLengthPath(blobs.head.path)
       if (lenght > max) maxLenghtPath(blobs.tail, lenght)
-      else(maxLenghtPath(blobs.tail, max))
+      else maxLenghtPath(blobs.tail, max)
     }
   }
 
+  /** PF method
+   *
+   * @param string path
+   * @return path without the blob name at the end of path
+   */
   def pathWithoutBlobName(string: String): String = {
     val split : String = string.split("/").dropRight(1).fold(""){(acc, s) => acc + s + "/"}
     split.slice(0, split.length - 1)
   }
 
+  /** PF method
+   *
+   * @param string path
+   * @return the blob name on the path
+   */
+  def lastOnPath(string: String) : String = {
+    val split : Array[String] = string.split("/")
+    split.last
+  }
+
+  /** PF method
+   *
+   * @param blobs blob list
+   * @param length int
+   * @return the blob having the path with the right length
+   */
   @scala.annotation.tailrec
   def getPath(blobs : List[Blob], length : Int) : String = {
     if(blobs.isEmpty) "ERREUR"
     else {
       if(getLengthPath(blobs.head.path) == length) pathWithoutBlobName(blobs.head.path)
-      else(getPath(blobs.tail, length))
+      else getPath(blobs.tail, length)
     }
   }
 
+  /** NOT PF method
+   *
+   * @param blobs blob list
+   * @param trees tree list (the method should be used with the tree list empty)
+   * @return the tree containing all the blob on the blob list
+   */
+  @scala.annotation.tailrec
   def writeTree(blobs : List[Blob], trees : List[Tree]) : Tree = {
     if(blobs.isEmpty ){
       val treeCreated = new Tree("root", blobs, trees)
@@ -62,22 +95,39 @@ object commit {
     writeTree(blobManipulation.diffList(blobs, blobsToAdd), treeCreated::treeManipulation.diffList(trees,treesToAdd))
   }
 
-  def sgitCommit() : Unit = {
+  /** NOT PF method
+   *
+   * Main commit method
+   * @param message the commit message
+   */
+  def sgitCommit(message: String) : Unit = {
     val head : Option[String] = utilities.getHEAD
-    if(head.isDefined){
+    if(head.isDefined){ //init done
       val headString : String = head.get
       val indexBlob: List[Blob] = indexConversion.indexToBlobList
       val tree : Tree = writeTree(indexBlob, List.empty)
       if (headString.equals("First commit")){
-        val commit : Commit = new Commit(tree.key, None, null)
-        //CREATE COMMIT
-        //UPDATE ref
+        val commit : Commit = new Commit(tree.key, None, message)
+        refsConversion.createOrUpdateRefFile(Ref(commit.key, "master")) //CREATE REF FILE
+        commitConversion.createCommitFile(List(commit))//CREATE COMMIT FILE
       } else {
-        //GET commitKey
-        //create commit : val commit : Commit = new Commit(tree.key, commitKey, null)
-        //UPDATE ref
-      }
+        //GET last commitKey
+        val refName = lastOnPath(headString) //master
+        val refHead: Option[Ref] = refsConversion.getRefByName(refName)
+        if(refHead.isDefined){
+          val lastCommit : Option[Commit] = commitConversion.getCommitByKey(refHead.get.commitKey)
+          if(lastCommit.get.treeC.equals(tree.key)){
+            println("Everything is up to date")
+          }else{
+            val commit : Commit = new Commit(tree.key, Option(refHead.get.commitKey), message)
+            refsConversion.createOrUpdateRefFile(Ref(commit.key, refName)) //CREATE REF FILE
+            commitConversion.createCommitFile(List(commit))//CREATE COMMIT FILE
+          }
 
+        }else{
+          println("Last commit ref invalid")
+        }
+      }
     }
   }
 

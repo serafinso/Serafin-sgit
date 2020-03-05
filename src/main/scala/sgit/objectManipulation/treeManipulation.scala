@@ -1,16 +1,16 @@
 package sgit.objectManipulation
 
-
-import sgit.objects.{Blob, Tree}
+import sgit.objects.Tree
 
 object treeManipulation {
 
-  /**
+  /** PF method
    *
    * @param tree
    * @param list
    * @return
    */
+  @scala.annotation.tailrec
   def isTreeInList(tree: Tree, list: List[Tree]) : Boolean = {
     if(list.isEmpty) false
     else (
@@ -19,7 +19,7 @@ object treeManipulation {
       )
   }
 
-  /**
+  /** PF method
    *
    * @param l1
    * @param l2
@@ -33,7 +33,12 @@ object treeManipulation {
     }
   }
 
-
+  /** PF method
+   *
+   * @param path
+   * @param trees
+   * @return
+   */
   def getTreeWithPath(path:String, trees: List[Tree]) : List[Tree] = {
     if (trees.isEmpty) trees
     else {

@@ -30,6 +30,11 @@ object Parser {
       cmd("commit")
         .action((_, c) => c.copy(command = "commit"))
         .text("Commit the index")
+        .children(
+          arg[String]("message")
+            .action((x, c) => c.copy(message = x))
+            .text("Commit message.")
+        )
     )
   }
 }
