@@ -30,4 +30,6 @@ In order to use the commands with the keyword `sgit`, and not `java -jar sgit.ja
 
 * **sgit init** : Allows to initialize the repository.sgit 
 * **sgit add** : Add file contents to the index
-* **sgit commit** : Record changes to the repository (not finished)
+* **sgit commit** : Record changes to the repository
+* **sgit status** : Show the working tree status (not finished)
+* **sgit diff** : Show changes between commits, commit and working tree, etc (not finished)
