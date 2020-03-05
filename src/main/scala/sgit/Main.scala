@@ -37,7 +37,10 @@ object Main extends App {
       case "init" => { init.init() }
       case "status" => status.sgitStatus()
       case "diff" => diff.sgitDiff()
-      case "commit" => { commit.sgitCommit(message) }
+      case "commit" => {
+
+        commit.sgitCommit(message)
+      }
       case "add" => add.addFiles(files)
       case _=> println("Error, write a good command 2")
     }
