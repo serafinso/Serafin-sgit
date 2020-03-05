@@ -1,19 +1,18 @@
 package sgit.io
 
-import java.nio.file.{Files, Path, Paths}
-
+import java.nio.file.{Files, Paths}
 import better.files._
-import sgit.io.indexConversion.getIndex
-import sgit.objects.Blob
 
 object utilities {
 
-  /**
+  /** NOT PF method
+   *
    * @return the working directory File
    */
   def getWD: File = ".sgit".toFile.parent
 
-  /**
+  /** NOT PF method
+   *
    * Get all the files located in the work directory without the files in .sgit
    * @return : Seq[File]
    */
@@ -35,20 +34,27 @@ object utilities {
       .toList)
   }
 
-  /**
+  /** NOT PF method
    *
-   * @param folderName
-   * @return
+   * @param folderName the folder name to search
+   * @return true if the folderName is present
    */
-
   def isFilePresent(folderName: String): Boolean = Files.exists(Paths.get(folderName))
 
+  /** PF method
+   *
+   * @param s the string to get the sha1 key
+   * @return the sha1 key of s
+   */
   def getKeySha1FromString(s : String): String ={
     val md = java.security.MessageDigest.getInstance("SHA-1")
     md.digest(s.getBytes("UTF-8")).map("%02x".format(_)).mkString
   }
 
-
+  /** NOT PF method
+   *
+   * @return the string contained in the HEAD file if it exist, None otherwise
+   */
   def getHEAD : Option[String] = {
     if (isFilePresent(".sgit/HEAD")){
       val headFile : File = ".sgit/HEAD".toFile
@@ -66,7 +72,8 @@ object utilities {
     }
   }
 
-  /**
+  /** NOT PF method
+   *
    * Rewrite the head entirely text
    * @param text text to add to the head file
    */

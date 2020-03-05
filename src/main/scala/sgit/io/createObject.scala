@@ -1,17 +1,13 @@
 package sgit.io
 
 import better.files._
-import java.nio.file.{Files, Paths}
-import sgit.io.utilities._
-
-import sgit.objects.Blob
 
 object createObject {
 
-  /**
+  /** NOT PF method
    *
-   * @param isDirectory
-   * @param name
+   * @param isDirectory true if the file to be created is a directory
+   * @param name name of the file to be created
    * @return true if the file as been created, false otherwise
    */
   def createFile(isDirectory: Boolean, name : String) : Boolean = {

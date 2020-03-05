@@ -5,12 +5,19 @@ import sgit.io.utilities.isFilePresent
 import sgit.objects.{Blob, BlobAndContent}
 object indexConversion {
 
+  /** NOT PF method
+   *
+   * @return the index file if it exists, None otherwise
+   */
   def getIndex : Option[File] = {
     if (isFilePresent(".sgit/index")) {Some(".sgit/index".toFile)}
     else None
   }
 
-
+  /** NOT PF method
+   *
+   * @return the blob list contained in the index
+   */
   def indexToBlobList : List[Blob] = {
     val indexFile : Option[File] = getIndex
     if(indexFile.isDefined){
@@ -31,7 +38,8 @@ object indexConversion {
     }
   }
 
-  /**
+  /** NOT PF method
+   *
    * Rewrite the index entirely with the Seq of Blob
    * @param blobList blob to add to the index
    */
@@ -42,7 +50,8 @@ object indexConversion {
     })
   }
 
-  /**
+  /** NOT PF method
+   *
    * Rewrite the index entirely with the Seq of Blob
    * @param blobList blob to add to the index
    */

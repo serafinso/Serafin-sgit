@@ -2,11 +2,12 @@ package sgit.io
 
 import better.files._
 import sgit.io.utilities.isFilePresent
-import sgit.objects.{Blob, Commit, Ref}
+import sgit.objects.{Commit, Ref}
 
 object commitConversion {
 
-  def createCommitFile (commits : List[Commit]) : Unit = {
+  @scala.annotation.tailrec
+  def createCommitFile(commits : List[Commit]) : Unit = {
     val commitPath: String = ".sgit/objects/commit/"
     if(commits.nonEmpty) {
       val commit : Commit = commits.head
