@@ -4,7 +4,7 @@ import better.files._
 import sgit.io.utilities.isFilePresent
 import sgit.localChange.commit
 import sgit.objectManipulation.blobManipulation
-import sgit.objects.{Blob, BlobAndContent, Commit, Tree, TreeKey}
+import sgit.objects.{Blob, Commit, Tree, TreeKey}
 
 object blobConversion {
 
@@ -18,38 +18,6 @@ object blobConversion {
     if(!".sgit".toFile.exists || !file.exists) return None
     val rootDir = ".".toFile
     Some(rootDir.relativize(file).toString)
-  }
-
-  /** NOT PF method
-   *
-   * @return the list of blobAC containing in the index
-   */
-  def wdToBlobACList : List[BlobAndContent] = {
-    val wdFiles : Option[List[File]] = utilities.getAllWDFiles
-    if(wdFiles.isEmpty){
-      List.empty
-    } else {
-      filesToBlobAndContentList(wdFiles.get)
-    }
-  }
-
-  /** PF method
-   *
-   * @param files the files to convert in blobAC list
-   * @return the blobAC list contained in the working directory
-   */
-  def filesToBlobAndContentList(files : List[File]) : List[BlobAndContent] = {
-      if(files.isEmpty) List.empty
-      else {
-        val file : File = files.head
-        if(file.isDirectory){
-          filesToBlobAndContentList(files.tail)
-        }
-        else{
-          val blob : BlobAndContent = BlobAndContent(file.sha1, shortFilePath(file).get, file.contentAsString )
-          blob::filesToBlobAndContentList(files.tail)
-        }
-      }
   }
 
   /** NOT PF method
@@ -89,14 +57,15 @@ object blobConversion {
    * @param blobs to be created
    */
   @scala.annotation.tailrec
-  def createBlobFiles(blobs : List[BlobAndContent]) : Unit = {
+  def createBlobFiles(blobs : List[Blob]) : Unit = {
     val blobPath: String = ".sgit/objects/blob/"
     if (blobs.nonEmpty) {
-      val blob: BlobAndContent = blobs.head
+      val blob: Blob = blobs.head
       if (!blobPath.contains(blob.key)) {
         val newFileInObject = createObject.createFile(isDirectory = false, blobPath + blob.key)
-        if (newFileInObject) {
-          (blobPath + blob.key).toFile.appendText(blob.content)
+        val content : Option[String] = getBlobContent(blob)
+        if (newFileInObject && content.isDefined) {
+          (blobPath + blob.key).toFile.appendText(getBlobContent(blob).get)
         }
         createBlobFiles(blobs.tail)
       }

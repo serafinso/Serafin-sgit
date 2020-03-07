@@ -1,31 +1,55 @@
 package sgit.objectManipulation
 
-import sgit.objects.{Blob, BlobAndContent, Tree}
+import sgit.objects.{Blob, Tree}
 
 object blobManipulation {
 
   /** PF method
    *
-   * @param blobAndContent blobAC to be converted
-   * @return convert blobAC to blob
+   * @param path the path to search in blob list
+   * @param blobs the blob list
+   * @return a blob that has the right path
    */
-  def blobACToBlob(blobAndContent: BlobAndContent) : Blob = {
-    Blob(blobAndContent.key, blobAndContent.path)
+  @scala.annotation.tailrec
+  def pathInBlobList(path: String, blobs: List[Blob]) : Option[Blob] = {
+    if(blobs.isEmpty)None
+    else{
+      val blob = blobs.head
+      if (blob.path.equals(path)) Some(blob)
+      else pathInBlobList(path, blobs.tail)
+    }
   }
 
   /** PF method
    *
-   * @param blobToSearch the blob
    * @param blobs the blob list
-   * @return return true if the blob list contained the blobToSearch, false otherwise
+   * @param blobAndContents the blobAndContent list
+   * @return true if blobs and blobAndContents contained the same blobs
    */
   @scala.annotation.tailrec
-  def blobInList(blobToSearch: BlobAndContent, blobs: List[Blob]) : Boolean = {
-    if(blobs.isEmpty) false
+  def isBlobListEqual(blobs : List[Blob], blobAndContents: List[Blob] ) : Boolean = {
+    if(blobs.length != blobAndContents.length) return false
+    if(blobs.isEmpty && blobAndContents.isEmpty) return true
+    val blob = blobs.head
+    val newBlobs: List[Blob] = removeBlob(blob, blobAndContents)
+    isBlobListEqual(blobs.tail, newBlobs)
+  }
+
+  /** PF method
+   *
+   * @param blob the blob to remove
+   * @param blobs list of blob
+   * @return blobAndContents without the blob
+   */
+  def removeBlob(blob : Blob, blobs: List[Blob]): List[Blob] ={
+    if(blobs.isEmpty) List.empty
     else{
-      val blob = blobs.head
-      if (blobToSearch.key.equals(blob.key) && blobToSearch.path.equals(blob.path)) true
-      else blobInList(blobToSearch, blobs.tail)
+      val blobHead = blobs.head
+      if(blob.key.equals(blobHead.key) && blob.path.equals(blobHead.path)){
+        blobs.tail
+      } else {
+        blobHead::removeBlob(blob, blobs.tail)
+      }
     }
   }
 
@@ -125,22 +149,6 @@ object blobManipulation {
     else {
       if (blobs.head.path.contains(path)) blobs.head::getBlobWithPath(path, blobs.tail)
       else getBlobWithPath(path, blobs.tail)
-    }
-  }
-
-  /** PF method
-   *
-   * @param path path the search
-   * @param blobs the blob list
-   * @return one blob with the rigth path
-   */
-  @scala.annotation.tailrec
-  def pathInBlobList(path: String, blobs: List[Blob]) : Option[Blob] = {
-    if(blobs.isEmpty)None
-    else{
-      val blob = blobs.head
-      if (blob.path.equals(path)) Some(blob)
-      else pathInBlobList(path, blobs.tail)
     }
   }
 

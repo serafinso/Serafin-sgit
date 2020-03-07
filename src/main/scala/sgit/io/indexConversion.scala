@@ -2,7 +2,7 @@ package sgit.io
 
 import better.files._
 import sgit.io.utilities.isFilePresent
-import sgit.objects.{Blob, BlobAndContent}
+import sgit.objects.{Blob}
 object indexConversion {
 
   /** NOT PF method
@@ -36,18 +36,6 @@ object indexConversion {
       println("Git init first")
       List.empty
     }
-  }
-
-  /** NOT PF method
-   *
-   * Rewrite the index entirely with the Seq of Blob
-   * @param blobList blob to add to the index
-   */
-  def blobACListToIndexFile(blobList : List[BlobAndContent]) : Unit = {
-    ".sgit/index".toFile.overwrite("")
-    blobList.map(blob => {
-      ".sgit/index".toFile.appendLine( blob.key+ " " + blob.path)
-    })
   }
 
   /** NOT PF method

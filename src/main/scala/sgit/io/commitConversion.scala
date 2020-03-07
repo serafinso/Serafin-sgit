@@ -13,7 +13,6 @@ object commitConversion {
     if(commits.nonEmpty) {
       val commit : Commit = commits.head
       if(!commitPath.contains(commit.key)){
-        println(commitPath + commit.key)
         val newFileInObject = createObject.createFile(isDirectory = false, commitPath + commit.key)
         if (newFileInObject) {
           (commitPath + commit.key).toFile.appendText(commit.content)

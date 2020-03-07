@@ -86,7 +86,6 @@ object commit {
       return treeCreated
     }
     val pathSelected : String = getPath(blobs, maxLength)
-    //println(pathSelected)
     val blobsToAdd: List[Blob] = blobManipulation.getBlobWithPath(pathSelected, blobs)
     val treesToAdd: List[Tree] = treeManipulation.getTreeWithPath(pathSelected, trees)
     val treeCreated : Tree = new Tree(pathSelected, blobsToAdd, treesToAdd)
