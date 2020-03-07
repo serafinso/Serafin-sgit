@@ -19,7 +19,7 @@ object log {
   def simpleLog() : Unit = {
     val optLastCommit : Option[Commit] = commitConversion.getLastCommit
     if (optLastCommit.isDefined){
-      val allCommit = commitConversion.getAllCommitFromLast(optLastCommit.get)
+      val allCommit = commitConversion.getAllCommitFromLast(optLastCommit.get).reverse
       allCommit.reverse.foreach(c=> printCommit(c))
     }else {
       println("fatal: your current branch 'master' does not have any commits yet")
@@ -52,9 +52,9 @@ object log {
     val optLastCommit : Option[Commit] = commitConversion.getLastCommit
     if (optLastCommit.isDefined){
       val allCommit = commitConversion.getAllCommitFromLast(optLastCommit.get).reverse
+      val firstCommit = allCommit.head
       val commitTuple : List[(Commit, Commit)] = getCommitInTuple(allCommit)
       //ATTENTION PAS DE HEAD
-      val firstCommit = allCommit.head
       commitTuple.reverse.foreach(commitTuple => {
         printCommit(commitTuple._2)
         val oldBlobs : Option[List[Blob]] = blobConversion.getBlobFromCommit(commitTuple._1)
