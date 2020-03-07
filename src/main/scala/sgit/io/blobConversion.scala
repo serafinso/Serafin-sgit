@@ -1,6 +1,7 @@
 package sgit.io
 
 import better.files._
+import sgit.io.utilities.isFilePresent
 import sgit.localChange.commit
 import sgit.objectManipulation.blobManipulation
 import sgit.objects.{Blob, BlobAndContent, Commit, Tree, TreeKey}
@@ -100,6 +101,35 @@ object blobConversion {
         createBlobFiles(blobs.tail)
       }
     }
+  }
+
+  def getBlobContent(blob: Blob) : Option[String] = {
+    if(getBlobContentFromKeyInIndex(blob.key).isDefined) return getBlobContentFromKeyInIndex(blob.key)
+    if(getBlobContentFromPathInWD(blob.path).isDefined) return getBlobContentFromPathInWD(blob.path)
+    println("Blob doesn't exist")
+    None
+  }
+
+  /** NOT PF method
+   * Create blobs files
+   * @param key
+   */
+  def getBlobContentFromKeyInIndex(key : String) : Option[String] = {
+    val blobPath: String = ".sgit/objects/blob/" + key
+    if (isFilePresent(blobPath)){
+      Some(blobPath.toFile.contentAsString)
+    } else None
+  }
+
+  /** NOT PF method
+   * Create blobs files
+   * @param path
+   */
+  def getBlobContentFromPathInWD(path : String) : Option[String] = {
+    val blobPath= utilities.getWD + "/" + path
+    if (isFilePresent(blobPath)){
+      Some(blobPath.toFile.contentAsString)
+    } else None
   }
 
   /**

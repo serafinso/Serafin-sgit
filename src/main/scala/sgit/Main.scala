@@ -26,7 +26,11 @@ object Main extends App {
         init.init()
       }
       case "status" => status.sgitStatus()
-      case "diff" => diff.sgitDiff()
+      case "diff" =>{
+        //println(blobConversion.getBlobContentFromKey("73BBE881072344EE6F8E8524B09DF2C22ACE425"))
+        diff.sgitDiff()
+      }
+
       case "commit" => {
         commit.sgitCommit(message)
       }
@@ -43,8 +47,8 @@ object Main extends App {
   def logOpt(option: String): Unit ={
     option match {
       case ""=> localChange.log.simpleLog()
+      case "p" => localChange.log.logP()
       case "stat" => println("Not done")
-      case "p" => println("Not done")
     }
   }
 
