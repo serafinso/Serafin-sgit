@@ -1,7 +1,9 @@
 package sgit.io
 
 import better.files._
-import sgit.objects.{Blob, BlobAndContent}
+import sgit.localChange.commit
+import sgit.objectManipulation.blobManipulation
+import sgit.objects.{Blob, BlobAndContent, Commit, Tree, TreeKey}
 
 object blobConversion {
 
@@ -88,9 +90,9 @@ object blobConversion {
   @scala.annotation.tailrec
   def createBlobFiles(blobs : List[BlobAndContent]) : Unit = {
     val blobPath: String = ".sgit/objects/blob/"
-    if(blobs.nonEmpty) {
-      val blob : BlobAndContent = blobs.head
-      if(!blobPath.contains(blob.key)){
+    if (blobs.nonEmpty) {
+      val blob: BlobAndContent = blobs.head
+      if (!blobPath.contains(blob.key)) {
         val newFileInObject = createObject.createFile(isDirectory = false, blobPath + blob.key)
         if (newFileInObject) {
           (blobPath + blob.key).toFile.appendText(blob.content)
@@ -100,10 +102,29 @@ object blobConversion {
     }
   }
 
+  /**
+   *
+   * @param treeKey
+   * @return
+   */
+  def getBlobsFromRootTreeKey(treeKey : String) : Option[List[Blob]] = {
+    val optionTree : Option[TreeKey] = treeConversion.getTreeByKey(treeKey)
+    if (optionTree.isDefined){
+      Some(blobManipulation.getBlobsFromTree(treeConversion.getTree(optionTree.get.blobs, optionTree.get.treesTuple, List.empty, "root")))
+    }else None
+  }
 
 
-
-
+  /**
+   *
+   * @return
+   */
+  def getLastCommitBlobs: Option[List[Blob]] = {
+    val optionCommit : Option[Commit] = commitConversion.getLastCommit
+    if(optionCommit.isDefined){
+      getBlobsFromRootTreeKey(optionCommit.get.treeC)
+    }else None
+  }
 
 
 }

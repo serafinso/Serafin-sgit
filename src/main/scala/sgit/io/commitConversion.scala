@@ -2,6 +2,7 @@ package sgit.io
 
 import better.files._
 import sgit.io.utilities.isFilePresent
+import sgit.localChange.commit.lastOnPath
 import sgit.objects.{Commit, Ref}
 
 object commitConversion {
@@ -12,6 +13,7 @@ object commitConversion {
     if(commits.nonEmpty) {
       val commit : Commit = commits.head
       if(!commitPath.contains(commit.key)){
+        println(commitPath + commit.key)
         val newFileInObject = createObject.createFile(isDirectory = false, commitPath + commit.key)
         if (newFileInObject) {
           (commitPath + commit.key).toFile.appendText(commit.content)
@@ -21,7 +23,7 @@ object commitConversion {
     }
   }
 
-  def getCommit(s: String) : Option[String] = {
+  def getCommitIfExist(s: String) : Option[String] = {
     if(s.equals("None")) None
     else Some(s)
   }
@@ -37,9 +39,9 @@ object commitConversion {
         None
       } else {
         val tree: String = line(0).split(" ")(2)
-        val commit : Option[String] = getCommit(line(1).split(" ")(2))
-        val message = line(2).split(" ")(2)
-        Some(new Commit(tree, commit, message))
+        val commit : Option[String] = getCommitIfExist(line(1).split(" ")(2))
+        val message = line(2).split(" ").drop(2).fold(""){(acc, s) => acc + s + " "}
+        Some(new Commit(tree, commit, message.substring(0, message.length-1)))
       }
     }else {
       println("Commit doesn't exist")
@@ -47,23 +49,44 @@ object commitConversion {
     }
   }
 
-  def getRefByName(name : String) : Option[Ref] = {
-    if (isFilePresent(".sgit/refs/heads/" + name)){
-      val headFile : File = (".sgit/refs/heads/" + name).toFile
-      val line : String = headFile.contentAsString
-      if (line.equals("")) { //PREMIER COMMIT
-        println("ERREUR with last commit")
+  /**
+   *
+   * @return
+   */
+  def getLastCommit : Option[Commit] = {
+    val head: Option[String] = utilities.getHEAD
+    if(head.isDefined){
+      if (head.get.equals("Initial commit")){
+        println("On branch master \n\nNo commits yet\n")
         None
-      } else {
-        Some(Ref(line, name))
+      }else{
+
+        val refName = lastOnPath(head.get)
+        val refHead: Option[Ref] = refsConversion.getRefByName(refName)
+
+        if(refHead.isDefined){
+          commitConversion.getCommitByKey(refHead.get.commitKey)
+        }else{
+          None
+        }
       }
-    }else {
-      println("ERREUR with last commit")
+    }else{
       None
     }
   }
 
-
-
+  def getAllCommitFromLast(lastCommit : Commit) : List[Commit] = {
+    if(lastCommit.parentC.isDefined) {
+      val newCommit:Option[Commit] = getCommitByKey(lastCommit.parentC.get)
+      if(newCommit.isDefined) lastCommit::getAllCommitFromLast(newCommit.get)
+      else {
+        println("Invalid commit")
+        List.empty
+      }
+    }
+    else{
+      List(lastCommit)
+    }
+  }
 
 }

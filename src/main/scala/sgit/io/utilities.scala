@@ -60,9 +60,7 @@ object utilities {
       val headFile : File = ".sgit/HEAD".toFile
       val line : String = headFile.contentAsString
       if (line.equals("")) { //PREMIER COMMIT
-        println("This is your first commit")
-        headFile.overwrite("refs/heads/master")
-        Some("First commit")
+        Some("Initial commit")
       } else {
         Some(line)
       }
@@ -74,16 +72,15 @@ object utilities {
 
   /** NOT PF method
    *
-   * Rewrite the head entirely text
-   * @param text text to add to the head file
+   * @return the string contained in the HEAD file if it exist, None otherwise
    */
-  def headUpdate(text : String) : Unit = {
-    if(isFilePresent(".sgit/HEAD")){
-      ".sgit/HEAD".toFile.overwrite(text)
+  def updtateHEAD(newHead: String) : Unit = {
+    if (isFilePresent(".sgit/HEAD")){
+      ".sgit/HEAD".toFile.overwrite(newHead)
     }else {
-      println("git init first")
+      println("Git init first")
     }
-
   }
+
 
 }

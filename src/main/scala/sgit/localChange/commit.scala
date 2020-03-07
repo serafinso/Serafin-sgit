@@ -95,6 +95,7 @@ object commit {
     writeTree(blobManipulation.diffList(blobs, blobsToAdd), treeCreated::treeManipulation.diffList(trees,treesToAdd))
   }
 
+
   /** NOT PF method
    *
    * Main commit method
@@ -105,27 +106,33 @@ object commit {
     if(head.isDefined){ //init done
       val headString : String = head.get
       val indexBlob: List[Blob] = indexConversion.indexToBlobList
-      val tree : Tree = writeTree(indexBlob, List.empty)
-      if (headString.equals("First commit")){
-        val commit : Commit = new Commit(tree.key, None, message)
-        refsConversion.createOrUpdateRefFile(Ref(commit.key, "master")) //CREATE REF FILE
-        commitConversion.createCommitFile(List(commit))//CREATE COMMIT FILE
-      } else {
-        //GET last commitKey
-        val refName = lastOnPath(headString) //master
-        val refHead: Option[Ref] = refsConversion.getRefByName(refName)
-        if(refHead.isDefined){
-          val lastCommit : Option[Commit] = commitConversion.getCommitByKey(refHead.get.commitKey)
-          if(lastCommit.get.treeC.equals(tree.key)){
-            println("Everything is up to date")
+      if (indexBlob.isEmpty){
+        println("nothing to commit")
+      }else {
+        val tree : Tree = writeTree(indexBlob, List.empty)
+        if (headString.equals("Initial commit")){
+          println("On branch master\n\n" + headString)
+          utilities.updtateHEAD("refs/head/master")
+          val commit : Commit = new Commit(tree.key, None, message)
+          refsConversion.createOrUpdateRefFile(Ref(commit.key, "master")) //CREATE REF FILE
+          commitConversion.createCommitFile(List(commit))//CREATE COMMIT FILE
+        } else {
+          //GET last commitKey
+          val refName = lastOnPath(headString) //master
+          val OptionCommitKey: Option[Ref] = refsConversion.getRefByName(refName)
+          if(OptionCommitKey.isDefined){
+            val lastCommit : Option[Commit] = commitConversion.getCommitByKey(OptionCommitKey.get.commitKey)
+            if(lastCommit.get.treeC.equals(tree.key)){
+              println("Everything is up to date")
+            }else{
+              val commit : Commit = new Commit(tree.key, Option(OptionCommitKey.get.commitKey), message)
+              refsConversion.createOrUpdateRefFile(Ref(commit.key, refName)) //CREATE REF FILE
+              commitConversion.createCommitFile(List(commit))//CREATE COMMIT FILE
+              println("Succesfully commited")
+            }
           }else{
-            val commit : Commit = new Commit(tree.key, Option(refHead.get.commitKey), message)
-            refsConversion.createOrUpdateRefFile(Ref(commit.key, refName)) //CREATE REF FILE
-            commitConversion.createCommitFile(List(commit))//CREATE COMMIT FILE
+            println("Last commit ref invalid")
           }
-
-        }else{
-          println("Last commit ref invalid")
         }
       }
     }

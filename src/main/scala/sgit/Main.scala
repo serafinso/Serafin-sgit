@@ -1,21 +1,8 @@
 package sgit
 
 import scopt.OParser
-import sgit.io.{blobConversion, init, refsConversion}
+import sgit.io.{blobConversion, init, refsConversion, treeConversion}
 import sgit.localChange.{add, commit, diff, status}
-import sgit.objects.{Blob, BlobAndContent, Commit, Ref, Tree}
-
-/*import sgit.create._
-import sgit.localChange.{add, commit}
-import sgit.Tree
-import sgit.io.readFile
-import sgit.io.createObject
-import sgit.io.writeFile*/
-
-
-import better.files._
-import sgit.io.utilities
-import sgit.io.indexConversion
 import scopts.{Parser,Config}
 
 
@@ -34,15 +21,31 @@ object Main extends App {
    */
   def determineMode(command: String, option: String, files: Seq[String], message: String): Unit = {
     command match {
-      case "init" => { init.init() }
+      case "init" => {
+
+        init.init()
+      }
       case "status" => status.sgitStatus()
       case "diff" => diff.sgitDiff()
       case "commit" => {
-
         commit.sgitCommit(message)
       }
       case "add" => add.addFiles(files)
+      case "log" => logOpt(option)
       case _=> println("Error, write a good command 2")
     }
   }
+
+  /** Determine the log option
+   *
+   * @param option: the log option
+   */
+  def logOpt(option: String): Unit ={
+    option match {
+      case ""=> localChange.log.simpleLog()
+      case "stat" => println("Not done")
+      case "p" => println("Not done")
+    }
+  }
+
 }

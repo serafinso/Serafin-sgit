@@ -32,7 +32,6 @@ object add {
     else{
       val blobAndContent = blobAndContents.head
       if(blob.key.equals(blobAndContent.key) && blob.path.equals(blobAndContent.path)){
-        println(blobAndContents.tail)
         blobAndContents.tail
       } else {
         blobAndContent::removeBlobAC(blob, blobAndContents.tail)

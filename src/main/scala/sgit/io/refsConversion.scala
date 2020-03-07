@@ -20,6 +20,7 @@ object refsConversion {
         println("ERREUR with last commit")
         None
       } else {
+        println("On branch "+ name +"\n")
         Some(Ref(line, name))
       }
     }else {
@@ -42,4 +43,6 @@ object refsConversion {
       }
     }
   }
+
+
 }

@@ -25,11 +25,15 @@ In order to use the commands with the keyword `sgit`, and not `java -jar sgit.ja
 * On Linux/Mac bash : `alias sgit='java -jar sgit.jar'`
 * On Windows Powershell : `Set-Alias -Name sgit -Value java -jar sgit.jar`
 
+To keep the alias functional you have to add it to the .`bashrc file`. So, do `nano .bachrc` and write at the end of the file `alias sgit='java -jar path/to/jar/sgit-assembly-xx.jar'`.
+Reload changes with `source .bashrc`.
+
 
 ## Available commands
 
 * **sgit init** : Allows to initialize the repository.sgit 
 * **sgit add** : Add file contents to the index
 * **sgit commit** : Record changes to the repository
-* **sgit status** : Show the working tree status (not finished)
+* **sgit status** : Show the working tree status
 * **sgit diff** : Show changes between commits, commit and working tree, etc (not finished)
+* **sgit log** : Shows the commit logs.

@@ -6,6 +6,7 @@ class Tree(pathT : String, blobs: List[Blob], trees: List[Tree]){
 
   val path : String = pathT
   val treesT : List[Tree] = trees
+  val blobsT : List[Blob] = blobs
 
   val content : String  = {
     val blobsSorted : List[Blob] = blobs.sortBy(b=>b.key)

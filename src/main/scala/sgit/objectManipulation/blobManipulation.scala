@@ -1,6 +1,6 @@
 package sgit.objectManipulation
 
-import sgit.objects.{Blob, BlobAndContent}
+import sgit.objects.{Blob, BlobAndContent, Tree}
 
 object blobManipulation {
 
@@ -134,6 +134,13 @@ object blobManipulation {
     else {
       if(!blob.key.equals(list.head.key) && blob.path.equals(list.head.path)) true
       else asBlobSamePathDiffKey(blob, list.tail)
+    }
+  }
+
+  def getBlobsFromTree(tree : Tree) : List[Blob] = {
+    if(tree.treesT.isEmpty) tree.blobsT
+    else {
+      getBlobsFromTree(tree.treesT.head):::getBlobsFromTree(new Tree(tree.path, tree.blobsT, tree.treesT.tail))
     }
   }
 }
