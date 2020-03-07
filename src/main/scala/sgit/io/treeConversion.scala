@@ -1,8 +1,6 @@
 package sgit.io
 
 import better.files._
-import sgit.io.commitConversion.getCommitIfExist
-import sgit.io.indexConversion.getIndex
 import sgit.io.utilities.isFilePresent
 import sgit.objects.{Blob, Commit, Tree, TreeKey}
 

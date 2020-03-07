@@ -7,6 +7,10 @@ import sgit.objects.{Commit, Ref}
 
 object commitConversion {
 
+  /** NOT PF method
+   *
+   * @param commits commit to be created
+   */
   @scala.annotation.tailrec
   def createCommitFile(commits : List[Commit]) : Unit = {
     val commitPath: String = ".sgit/objects/commit/"
@@ -22,11 +26,11 @@ object commitConversion {
     }
   }
 
-  def getCommitIfExist(s: String) : Option[String] = {
-    if(s.equals("None")) None
-    else Some(s)
-  }
-
+  /** NOT PF method
+   *
+   * @param key the commit key
+   * @return the commit with the rigth key if it exist, None otherwise
+   */
   def getCommitByKey(key : String) : Option[Commit] = {
     if (isFilePresent(".sgit/objects/commit/" + key)){
       val commitFile : File = (".sgit/objects/commit/" + key).toFile
@@ -38,7 +42,10 @@ object commitConversion {
         None
       } else {
         val tree: String = line(0).split(" ")(2)
-        val commit : Option[String] = getCommitIfExist(line(1).split(" ")(2))
+        val commit : Option[String] = {
+          if(line(1).split(" ")(2).equals("None")) None
+          else Some(line(1).split(" ")(2))
+        }
         val message = line(2).split(" ").drop(2).fold(""){(acc, s) => acc + s + " "}
         Some(new Commit(tree, commit, message.substring(0, message.length-1)))
       }
@@ -48,9 +55,9 @@ object commitConversion {
     }
   }
 
-  /**
+  /** NOT PF method
    *
-   * @return
+   * @return the last commit if it exists, None otherwise
    */
   def getLastCommit : Option[Commit] = {
     val head: Option[String] = utilities.getHEAD
@@ -74,6 +81,11 @@ object commitConversion {
     }
   }
 
+  /** NOT PF method
+   *
+   * @param lastCommit the last commit
+   * @return All the commit including the last one
+   */
   def getAllCommitFromLast(lastCommit : Commit) : List[Commit] = {
     if(lastCommit.parentC.isDefined) {
       val newCommit:Option[Commit] = getCommitByKey(lastCommit.parentC.get)
