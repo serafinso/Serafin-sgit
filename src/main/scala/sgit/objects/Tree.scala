@@ -2,6 +2,12 @@ package sgit.objects
 
 import sgit.io.utilities.getKeySha1FromString
 
+/** The tree object
+ *
+ * @param pathT the path Tree
+ * @param blobs the blobs children of the Tree
+ * @param trees the trees children of the Tree
+ */
 class Tree(pathT : String, blobs: List[Blob], trees: List[Tree]){
 
   val path : String = pathT

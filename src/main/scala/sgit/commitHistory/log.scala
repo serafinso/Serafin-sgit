@@ -1,11 +1,16 @@
-package sgit.localChange
+package sgit.commitHistory
 
-import sgit.io.{blobConversion, commitConversion}
-import sgit.objectManipulation.blobManipulation
+import sgit.io.objectConversion.{blobConversion, commitConversion}
+import sgit.localChange.diff
+import sgit.objectManipulation.{blobManipulation, commitManipulation}
 import sgit.objects.{Blob, Commit}
 
 object log {
-
+  /** NOT PF Method
+   *
+   * @param commit commit to be printed
+   * print the commit beautifully
+   */
   def printCommit(commit : Commit) : Unit = {
     println(
       Console.YELLOW + "commit "+ commit.key +" ("
@@ -16,6 +21,9 @@ object log {
     )
   }
 
+  /**
+   * The main log method with no option
+   */
   def simpleLog() : Unit = {
     val optLastCommit : Option[Commit] = commitConversion.getLastCommit
     if (optLastCommit.isDefined){
@@ -26,11 +34,11 @@ object log {
     }
   }
 
-  def getCommitInTuple (commits : List[Commit]) : List[(Commit,Commit)] = {
-    if(commits.isEmpty || commits.tail.isEmpty) return List.empty
-    else (commits.head, commits.tail.head)::getCommitInTuple(commits.tail)
-  }
-
+  /** NOT PF method
+   *
+   * @param b blob added
+   * Print the blob added
+   */
   def printAdd (b: Blob) : Unit = {
     val content : Option[String] = blobConversion.getBlobContent(b)
     println(
@@ -48,12 +56,15 @@ object log {
       )
   }
 
+  /**
+   * The main log method
+   */
   def logP(): Unit = {
     val optLastCommit : Option[Commit] = commitConversion.getLastCommit
     if (optLastCommit.isDefined){
       val allCommit = commitConversion.getAllCommitFromLast(optLastCommit.get).reverse
       val firstCommit = allCommit.head
-      val commitTuple : List[(Commit, Commit)] = getCommitInTuple(allCommit)
+      val commitTuple : List[(Commit, Commit)] = commitManipulation.getCommitInTuple(allCommit)
       //ATTENTION PAS DE HEAD
       commitTuple.reverse.foreach(commitTuple => {
         printCommit(commitTuple._2)

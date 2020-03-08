@@ -1,12 +1,11 @@
-package sgit.io
+package sgit.io.objectConversion
 
-import better.files.File
+import better.files._
+import sgit.io.utilities
 import sgit.io.utilities.isFilePresent
 import sgit.objects.Ref
-import better.files._
 
 object refsConversion {
-
   /** NOT PF method
    *
    * @param name ref name to search
@@ -37,12 +36,10 @@ object refsConversion {
     if(isFilePresent(".sgit/refs/heads/" + ref.name)){ //Update
       (".sgit/refs/heads/"+ref.name).toFile.overwrite(ref.commitKey)
     }else{ //Create
-      val newFileInObject = createObject.createFile(isDirectory = false, ".sgit/refs/heads/" + ref.name)
+      val newFileInObject = utilities.createFile(isDirectory = false, ".sgit/refs/heads/" + ref.name)
       if (newFileInObject) {
         (".sgit/refs/heads/" + ref.name).toFile.appendText(ref.commitKey)
       }
     }
   }
-
-
 }

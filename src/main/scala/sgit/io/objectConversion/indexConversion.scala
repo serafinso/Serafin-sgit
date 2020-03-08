@@ -1,10 +1,10 @@
-package sgit.io
+package sgit.io.objectConversion
 
 import better.files._
 import sgit.io.utilities.isFilePresent
-import sgit.objects.{Blob}
-object indexConversion {
+import sgit.objects.Blob
 
+object indexConversion {
   /** NOT PF method
    *
    * @return the index file if it exists, None otherwise
@@ -49,5 +49,4 @@ object indexConversion {
       ".sgit/index".toFile.appendLine( blob.key+ " " + blob.path)
     })
   }
-
 }

@@ -1,12 +1,12 @@
-package sgit.io
+package sgit.io.objectConversion
 
 import better.files._
-import sgit.io.utilities.isFilePresent
+import sgit.io.utilities
 import sgit.objectManipulation.blobManipulation
 import sgit.objects.{Blob, Commit, TreeKey}
 
 object blobConversion {
-
+  //Object containing Not PF Method
   /** NOT PF method
    *
    * Gets the file path from the root of the working directory.
@@ -32,7 +32,7 @@ object blobConversion {
     }
   }
 
-  /** PF method
+  /** PF method method
    *
    * @param files to convert into blob list
    * @return the blob list
@@ -61,7 +61,7 @@ object blobConversion {
     if (blobs.nonEmpty) {
       if (!blobPath.contains(blobs.head.key)) {
         val content : Option[String] = getBlobContent(blobs.head)
-        val newFileInObject = createObject.createFile(isDirectory = false, blobPath + blobs.head.key)
+        val newFileInObject = utilities.createFile(isDirectory = false, blobPath + blobs.head.key)
         if (newFileInObject && content.isDefined) {
           (blobPath + blobs.head.key).toFile.appendText(content.get)
         }
@@ -70,7 +70,7 @@ object blobConversion {
     }
   }
 
-  /** NOT PF
+  /** NOT PF method
    *
    * @param blob the blob
    * @return the content of the blob
@@ -88,7 +88,7 @@ object blobConversion {
    */
   def getBlobContentFromKeyInIndex(key : String) : Option[String] = {
     val blobPath: String = ".sgit/objects/blob/" + key
-    if (isFilePresent(blobPath)){
+    if (utilities.isFilePresent(blobPath)){
       Some(blobPath.toFile.contentAsString)
     } else None
   }
@@ -98,13 +98,13 @@ object blobConversion {
    * @param path blob path
    */
   def getBlobContentFromPathInWD(path : String) : Option[String] = {
-    val blobPath= utilities.getWD + "/" + path
-    if (isFilePresent(blobPath)){
+    val blobPath= utilities.getWDPath + "/" + path
+    if (utilities.isFilePresent(blobPath)){
       Some(blobPath.toFile.contentAsString)
     } else None
   }
 
-  /** Not PF
+  /** Not PF method
    *
    * @param key the tree key
    * @return the blob list from a tree key
@@ -116,8 +116,7 @@ object blobConversion {
     }else None
   }
 
-
-  /** Not PF
+  /** Not PF method
    *
    * @return get all the blob from the last commit if the last commit exist
    */
@@ -128,9 +127,12 @@ object blobConversion {
     }else None
   }
 
+  /** NOT PF method
+   *
+   * @param c the commit
+   * @return the blobs list contained in the commit
+   */
   def getBlobFromCommit(c : Commit) : Option[List[Blob]] = {
     getBlobsFromRootTreeKey(c.treeC)
   }
-
-
 }

@@ -1,7 +1,8 @@
 package sgit.localChange
 
-import sgit.io.{blobConversion, utilities, indexConversion}
-import sgit.objects.{Blob}
+import sgit.io.objectConversion.{blobConversion, indexConversion}
+import sgit.io.utilities
+import sgit.objects.Blob
 import sgit.objectManipulation.blobManipulation
 
 object add {
@@ -64,5 +65,4 @@ object add {
       }
     }
   }
-
 }

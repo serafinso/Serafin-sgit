@@ -2,6 +2,12 @@ package sgit.objects
 
 import sgit.io.utilities.getKeySha1FromString
 
+/**
+ *
+ * @param tree The commit root tree
+ * @param parent The parent commit (older commit)
+ * @param message The message enter during the commit
+ */
 class Commit(tree: String, parent : Option[String], message : String){
   val parentC : Option[String] = parent
   val treeC : String = tree

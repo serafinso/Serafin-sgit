@@ -1,8 +1,9 @@
-package sgit.io
+package sgit.io.objectConversion
 
 import better.files._
+import sgit.io.utilities
 import sgit.io.utilities.isFilePresent
-import sgit.objects.{Blob, Commit, Tree, TreeKey}
+import sgit.objects.{Blob, Tree, TreeKey}
 
 object treeConversion {
 
@@ -16,7 +17,7 @@ object treeConversion {
     if(trees.nonEmpty) {
       val tree : Tree = trees.head
       if(!treePath.contains(tree.key)){
-        val newFileInObject = createObject.createFile(isDirectory = false, treePath + tree.key)
+        val newFileInObject = utilities.createFile(isDirectory = false, treePath + tree.key)
         if (newFileInObject) {
           (treePath + tree.key).toFile.appendText(tree.content)
         }
@@ -25,8 +26,15 @@ object treeConversion {
     }
   }
 
-
-  def createTreeKeyFromString( lines : Array[String], blobs: List[Blob], trees : List[(String,String)]) : TreeKey = {
+  /** NOT PF method
+   *
+   * @param lines content in the tree files og the tree being created
+   * @param blobs the blobs list of the tree being created
+   * @param trees the tree in from of Tuple(String, String) = Tuple(key, path) of the tree
+   * @return create a TreeKey from the content in the tree files (located in .sgit/objects/tree)
+   */
+  @scala.annotation.tailrec
+  def createTreeKeyFromString(lines : Array[String], blobs: List[Blob], trees : List[(String,String)]) : TreeKey = {
     if(lines.isEmpty) {
       TreeKey(blobs, trees)
     }else {
@@ -35,6 +43,11 @@ object treeConversion {
     }
   }
 
+  /** NOT PF method
+   *
+   * @param key the tree key
+   * @return the tree with the right key if it exist, None otherwise
+   */
   def getTreeByKey(key:String) : Option[TreeKey] = {
     if (isFilePresent(".sgit/objects/tree/" + key)){
       val treeFile : File = (".sgit/objects/tree/" + key).toFile
@@ -46,7 +59,6 @@ object treeConversion {
         None
       } else {
         Some(createTreeKeyFromString(lines, List.empty, List.empty))
-
       }
     }else {
       println("Tree doesn't exist")
@@ -73,10 +85,4 @@ object treeConversion {
        else getTree(blobs, treesTuples.tail, trees, currentPath)
      }
    }
-
-
-
-
-
-
 }

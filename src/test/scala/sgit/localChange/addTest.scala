@@ -2,13 +2,15 @@ package sgit.localChange
 
 import org.scalatest._
 import better.files._
-import sgit.io.{indexConversion, init}
+import sgit.io.{init, utilities}
+import sgit.io.objectConversion.indexConversion
 import sgit.objectManipulation.blobManipulation
 import sgit.objects.Blob
 
 
 class addTest extends FunSpec with BeforeAndAfter with Matchers {
   describe("If the user add a file in the index"){
+    if(utilities.isFilePresent(".sgit")) ".sgit".toFile.delete()
     it("it should add a line in the index") {
       init.init()
       val sgitDirectory = ".sgit".toFile
@@ -25,6 +27,7 @@ class addTest extends FunSpec with BeforeAndAfter with Matchers {
 
   describe("If the user update a file in the working directory"){
     it("it should update the associated line in the index") {
+      if(utilities.isFilePresent(".sgit")) ".sgit".toFile.delete()
       init.init()
       val sgitDirectory = ".sgit".toFile
       val file: File = "Test1"
@@ -42,6 +45,7 @@ class addTest extends FunSpec with BeforeAndAfter with Matchers {
 
   describe("If a file existing in the index and doesn't exist in the working directory is added"){
     it("it should delete the line related to that line in the index"){
+      if(utilities.isFilePresent(".sgit")) ".sgit".toFile.delete()
       init.init()
       val sgitDirectory = ".sgit".toFile
       val file: File = "Test1"

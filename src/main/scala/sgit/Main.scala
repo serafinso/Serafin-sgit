@@ -1,9 +1,12 @@
 package sgit
 
 import scopt.OParser
-import sgit.io.{blobConversion, init, refsConversion, treeConversion}
+import sgit.io.init
 import sgit.localChange.{add, commit, diff, status}
-import scopts.{Parser,Config}
+import scopts.{Config, Parser}
+import sgit.commitHistory.log
+import sgit.objectManipulation.blobManipulation
+import sgit.objects.Blob
 
 
 object Main extends App {
@@ -21,16 +24,9 @@ object Main extends App {
    */
   def determineMode(command: String, option: String, files: Seq[String], message: String): Unit = {
     command match {
-      case "init" => {
-
-        init.init()
-      }
+      case "init" => init.init()
       case "status" => status.sgitStatus()
-      case "diff" =>{
-        //println(blobConversion.getBlobContentFromKey("73BBE881072344EE6F8E8524B09DF2C22ACE425"))
-        diff.sgitDiff()
-      }
-
+      case "diff" => diff.sgitDiff()
       case "commit" => {
         commit.sgitCommit(message)
       }
@@ -46,10 +42,9 @@ object Main extends App {
    */
   def logOpt(option: String): Unit ={
     option match {
-      case ""=> localChange.log.simpleLog()
-      case "p" => localChange.log.logP()
+      case ""=> log.simpleLog()
+      case "p" => commitHistory.log.logP()
       case "stat" => println("Not done")
     }
   }
-
 }

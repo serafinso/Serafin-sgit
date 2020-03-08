@@ -1,8 +1,9 @@
-package sgit.io
+package sgit.io.objectConversion
 
 import better.files._
 import sgit.io.utilities.isFilePresent
-import sgit.localChange.commit.lastOnPath
+import sgit.io.utilities
+import sgit.objectManipulation.blobManipulation
 import sgit.objects.{Commit, Ref}
 
 object commitConversion {
@@ -17,7 +18,7 @@ object commitConversion {
     if(commits.nonEmpty) {
       val commit : Commit = commits.head
       if(!commitPath.contains(commit.key)){
-        val newFileInObject = createObject.createFile(isDirectory = false, commitPath + commit.key)
+        val newFileInObject = utilities.createFile(isDirectory = false, commitPath + commit.key)
         if (newFileInObject) {
           (commitPath + commit.key).toFile.appendText(commit.content)
         }
@@ -66,19 +67,13 @@ object commitConversion {
         println("On branch master \n\nNo commits yet\n")
         None
       }else{
-
-        val refName = lastOnPath(head.get)
+        val refName = blobManipulation.lastOnPath(head.get)
         val refHead: Option[Ref] = refsConversion.getRefByName(refName)
-
         if(refHead.isDefined){
           commitConversion.getCommitByKey(refHead.get.commitKey)
-        }else{
-          None
-        }
+        } else None
       }
-    }else{
-      None
-    }
+    } else None
   }
 
   /** NOT PF method
@@ -95,9 +90,6 @@ object commitConversion {
         List.empty
       }
     }
-    else{
-      List(lastCommit)
-    }
+    else List(lastCommit)
   }
-
 }

@@ -118,6 +118,34 @@ object blobManipulation {
 
   /** PF method
    *
+   * @param l1 the first blob list
+   * @param l2 the second blob list
+   * @return l1 blob list without the blobs in l2
+   */
+  def interList(l1: List[Blob], l2: List[Blob]) : List[Blob] = {
+    if(l1.isEmpty) l1
+    else{
+      if(isBlobInList(l1.head, l2)) l1.head ::interList(l1.tail, l2)
+      else interList(l1.tail, l2)
+    }
+  }
+
+  /** PF method
+   *
+   * @param wdBlob = the list of Blobs in the working directory
+   * @param indexBlob = the list of Blobs in the index file
+   * @return WD blobs that have any index blob with the same pathname but a different key
+   */
+  def samePathDiffKeyL1(wdBlob: List[Blob], indexBlob: List[Blob]) : List[Blob] = {
+    if(wdBlob.isEmpty) List.empty
+    else {
+      if(blobManipulation.asBlobSamePathDiffKey(wdBlob.head, indexBlob)) wdBlob.head::samePathDiffKeyL1(wdBlob.tail, indexBlob)
+      else samePathDiffKeyL1(wdBlob.tail, indexBlob)
+    }
+  }
+
+  /** PF method
+   *
    * @param blob blob to compare
    * @param list the blob list
    * @return true if there is a blob in the list that has the same path but a different key
@@ -131,6 +159,11 @@ object blobManipulation {
     }
   }
 
+  /** PF method
+   *
+   * @param tree the tree
+   * @return All the children blob in the tree and in its children trees
+   */
   def getBlobsFromTree(tree : Tree) : List[Blob] = {
     if(tree.treesT.isEmpty) tree.blobsT
     else {
@@ -152,12 +185,70 @@ object blobManipulation {
     }
   }
 
+  /** PF method
+   *
+   * @param blobs the blob list
+   * @param max the length max (to use this method the max should be initializate at 0)
+   * @return the max length on the blob list
+   */
+  @scala.annotation.tailrec
+  def maxLenghtBlobPath(blobs : List[Blob], max: Int): Int = {
+    if(blobs.isEmpty) max
+    else {
+      val lenght : Int = stringManipulation.getLengthPath(blobs.head.path)
+      if (lenght > max) maxLenghtBlobPath(blobs.tail, lenght)
+      else maxLenghtBlobPath(blobs.tail, max)
+    }
+  }
+
+  /** PF method
+   *
+   * @param l1 the first list
+   * @param l2 the second list
+   * @return the blobs in l2 that as the same path of one blob in l1
+   */
   def getBlobsSamePathL1(l1:List[Blob], l2: List[Blob]) : List[Blob] = {
     if(l1.isEmpty || l2.isEmpty) l1
     else{
       val optBlob : Option[Blob] = pathInBlobList(l1.head.path, l2)
       if(optBlob.isDefined) optBlob.get::getBlobsSamePathL1(l1.tail, l2)
       else getBlobsSamePathL1(l1.tail, l2)
+    }
+  }
+
+  /** PF method
+   *
+   * @param l1 first list to combine
+   * @param l2 second list to combine
+   * @return combine the to list in tuple list
+   */
+  def listToTuple (l1:List[Blob], l2: List[Blob]) : List[(Blob, Blob)] = {
+    if(l1.size != l2.size || l1.isEmpty) List.empty
+    else Tuple2(l1.head, l2.head)::listToTuple(l1.tail, l2.tail)
+  }
+
+  /** PF method
+   *
+   * @param string path
+   * @return the blob name on the path
+   */
+  def lastOnPath(string: String) : String = {
+    val split : Array[String] = string.split("/")
+    split.last
+  }
+
+  /** PF method
+   *
+   * @param blobs blob list
+   * @param length int
+   * @return the blob path having the path with the right length
+   */
+  @scala.annotation.tailrec
+  def getPath(blobs : List[Blob], length : Int) : String = {
+    if(blobs.isEmpty) "ERREUR"
+    else {
+      if(stringManipulation.getLengthPath(blobs.head.path) == length) stringManipulation.pathWithoutBlobName(blobs.head.path)
+      else getPath(blobs.tail, length)
     }
   }
 }

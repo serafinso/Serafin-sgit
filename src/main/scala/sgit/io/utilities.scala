@@ -4,12 +4,33 @@ import java.nio.file.{Files, Paths}
 import better.files._
 
 object utilities {
+  /** NOT PF method
+   *
+   * @param isDirectory true if the file to be created is a directory
+   * @param name name of the file to be created
+   * @return true if the file as been created, false otherwise
+   */
+  def createFile(isDirectory: Boolean, name : String) : Boolean = {
+    if(utilities.isFilePresent(name)) false
+    else {
+      val _ : File = name
+        .toFile
+        .createIfNotExists(isDirectory, createParents = true)
+      true
+    }
+  }
 
   /** NOT PF method
    *
    * @return the working directory File
    */
   def getWD: File = ".sgit".toFile.parent
+
+  /** NOT PF method
+   *
+   * @return the working directory File
+   */
+  def getWDPath: String = ".sgit".toFile.parent.toString()
 
   /** NOT PF method
    *
@@ -31,6 +52,7 @@ object utilities {
       .filterNot(file => file.pathAsString.contains("serafin-git.iml"))
       .filterNot(file => file.pathAsString.contains(".git"))
       .filterNot(file => file.pathAsString.contains(".DS_Store"))
+      .filterNot(file => file.pathAsString.contains("sgit.bash"))
       .toList)
   }
 
@@ -81,6 +103,4 @@ object utilities {
       println("Git init first")
     }
   }
-
-
 }
